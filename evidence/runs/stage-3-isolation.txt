@@ -1,0 +1,29 @@
+reading catalog: passed
+
+backend source was not copied into this repo
+
+compose topology: passed
+
+runtime configuration
+  temperature-demo-backend-a image=sha256:e040db03663d14e84f086c25e5f5e30b0d986fd935b1e2563907cdbc78174774 DATABASE_HOST=postgres-a DATABASE_NAME=temperature_a network=temperature-demo-home-a
+  temperature-demo-backend-b image=sha256:e040db03663d14e84f086c25e5f5e30b0d986fd935b1e2563907cdbc78174774 DATABASE_HOST=postgres-b DATABASE_NAME=temperature_b network=temperature-demo-home-b
+  shared image tag: temperature-iot-backend:demo
+same image and configuration isolation: passed
+
+seed home-a: already stored
+seed home-b: already stored
+
+database temperature_a (temperature-demo-postgres-a)
+  home-a living-room 72.4 F 2026-10-11T16:00:00Z
+
+database temperature_b (temperature-demo-postgres-b)
+  home-b kitchen 20.5 C 2026-10-11T16:00:00Z
+
+persistence isolation: passed
+
+dns
+  temperature-demo-backend-a resolves postgres-a
+  temperature-demo-backend-a does not resolve postgres-b
+  temperature-demo-backend-b resolves postgres-b
+  temperature-demo-backend-b does not resolve postgres-a
+docker dns isolation: passed

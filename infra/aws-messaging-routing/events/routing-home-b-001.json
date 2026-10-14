@@ -1,0 +1,8 @@
+{
+  "event_id": "routing-home-b-001",
+  "house_id": "home-b",
+  "device_id": "thermostat-001",
+  "temperature": 68.1,
+  "unit": "F",
+  "observed_at": "2026-10-14T16:05:00Z"
+}

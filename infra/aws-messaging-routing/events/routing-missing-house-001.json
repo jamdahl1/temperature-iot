@@ -1,0 +1,7 @@
+{
+  "event_id": "routing-missing-house-001",
+  "device_id": "thermostat-001",
+  "temperature": 71.0,
+  "unit": "F",
+  "observed_at": "2026-10-14T16:15:00Z"
+}

@@ -1,0 +1,1 @@
+"""Docker DNS checks for the running composition."""

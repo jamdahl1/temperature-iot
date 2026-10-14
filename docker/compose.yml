@@ -1,0 +1,111 @@
+name: temperature-demo
+
+# Two copies of one backend image. Networks, database names, and
+# DATABASE_* differ. PostgreSQL is not published on the host.
+
+networks:
+  home-a:
+    name: temperature-demo-home-a
+  home-b:
+    name: temperature-demo-home-b
+
+volumes:
+  postgres-a:
+    name: temperature-demo-postgres-a-data
+  postgres-b:
+    name: temperature-demo-postgres-b-data
+
+services:
+  postgres-a:
+    image: postgres:16
+    container_name: temperature-demo-postgres-a
+    networks: [home-a]
+    environment:
+      POSTGRES_USER: temperature
+      POSTGRES_PASSWORD: local-demo-pw
+      POSTGRES_DB: temperature_a
+    volumes:
+      - postgres-a:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temperature -d temperature_a"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+
+  postgres-b:
+    image: postgres:16
+    container_name: temperature-demo-postgres-b
+    networks: [home-b]
+    environment:
+      POSTGRES_USER: temperature
+      POSTGRES_PASSWORD: local-demo-pw
+      POSTGRES_DB: temperature_b
+    volumes:
+      - postgres-b:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temperature -d temperature_b"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+
+  backend-a:
+    image: temperature-iot-backend:demo
+    container_name: temperature-demo-backend-a
+    restart: on-failure
+    networks: [home-a]
+    depends_on:
+      postgres-a:
+        condition: service_healthy
+    environment:
+      DATABASE_HOST: postgres-a
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: temperature_a
+      DATABASE_USER: temperature
+      DATABASE_PASSWORD: local-demo-pw
+    command: ["serve", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "127.0.0.1:18081:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/houses/readiness/sensors', timeout=3)",
+        ]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+      start_period: 8s
+
+  backend-b:
+    image: temperature-iot-backend:demo
+    container_name: temperature-demo-backend-b
+    restart: on-failure
+    networks: [home-b]
+    depends_on:
+      postgres-b:
+        condition: service_healthy
+    environment:
+      DATABASE_HOST: postgres-b
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: temperature_b
+      DATABASE_USER: temperature
+      DATABASE_PASSWORD: local-demo-pw
+    command: ["serve", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "127.0.0.1:18082:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/houses/readiness/sensors', timeout=3)",
+        ]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+      start_period: 8s

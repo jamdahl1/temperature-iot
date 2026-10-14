@@ -1,0 +1,8 @@
+{
+  "event_id": "routing-unknown-001",
+  "house_id": "unknown",
+  "device_id": "thermostat-001",
+  "temperature": 70.0,
+  "unit": "F",
+  "observed_at": "2026-10-14T16:10:00Z"
+}

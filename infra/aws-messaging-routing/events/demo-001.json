@@ -1,0 +1,7 @@
+{
+  "event_id": "demo-001",
+  "device_id": "thermostat-001",
+  "temperature": 72.4,
+  "unit": "F",
+  "observed_at": "2026-10-14T14:00:00Z"
+}
